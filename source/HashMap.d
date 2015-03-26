@@ -106,6 +106,10 @@ public class HashMap(K, V) : Map!(K, V){
 		V value = null;
 		return value;
 	}
+	
+	/**
+	* Wipe contents of map
+	*/
 	override public void clear(){
 		
 	}
