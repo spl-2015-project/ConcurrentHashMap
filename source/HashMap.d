@@ -96,7 +96,9 @@ public class HashMap(K, V) : Map!(K, V){
 		}
 		return false;
 	}
-	
+	/**
+	* Check if map is empty
+	*/
 	override public bool isEmpty(){
 		return this.size == 0;
 	}
