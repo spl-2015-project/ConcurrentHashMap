@@ -3,7 +3,7 @@ module spl.impl;
 import std.stdio;
 import spl.interfaces;
 
-public class HashMap(K, V) : Map!(K, V){
+public class HashMap(K, V) : IMap!(K, V){
 	
 	private static final int INITIAL_CAPACITY = 16;
 	
@@ -100,13 +100,23 @@ public class HashMap(K, V) : Map!(K, V){
 	* Check if map is empty
 	*/
 	override public bool isEmpty(){
-		return this.size == 0;
+		if(this.size == 0)
+			return false;
+		else
+			return true;	
 	}
 	override public V remove(K){
-		V value = null;
-		return value;
+		if(containsKey(k)){
+			V value = null;
+			return value;
+		}else{
+			//TODO : Msg to tell map is empty
+		}		
 	}
 	
+	override public V remove(K){
+		return value;
+	}
 	/**
 	* Wipe contents of map
 	*/

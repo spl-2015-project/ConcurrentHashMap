@@ -1,10 +1,11 @@
 module spl.interfaces;
 
-public interface Map(K:Object, V:Object ){
+public interface IMap(K:Object, V:Object ){
 	/**
 		Put the given key value pair into the map
 	*/
 	public void put(K, V);
+	
 	/**
 		Get the given value associated with the key
 	*/
