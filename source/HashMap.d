@@ -106,17 +106,18 @@ public class HashMap(K, V) : IMap!(K, V){
 			return true;	
 	}
 	override public V remove(K){
-		if(containsKey(k)){
-			V value = null;
+		if(containsKey(K)){
+			int bucket = getBucket(K);
+			int value = backingArr[bucket].value;
+			//I think some of the logic for our map is broken (left off here)
+			backingArr[bucket] = null;
+			this.size--;
 			return value;
 		}else{
-			//TODO : Msg to tell map is empty
+			//TODO : Excepction if key is not found
 		}		
 	}
 	
-	override public V remove(K){
-		return value;
-	}
 	/**
 	* Wipe contents of map
 	*/
