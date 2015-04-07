@@ -119,11 +119,11 @@ public class HashMap(K, V) : IMap!(K, V){
 				// first node match; handle separately
 				if(backingArr[bucket] == curr){
 					backingArr[bucket] = curr.next;
-					this.size--;
-					return curr.value;
-				}
+					this.size--;		
+				}else{
 					prev.next = curr.next;
 					this.size--;
+				}					
 					return curr.value;
 			}
 			prev = curr;
