@@ -22,6 +22,8 @@ class SimpleKey{
 	}
 }
 unittest{ 
+	
+	//Testing simple put
 	HashMap!(SimpleKey, SimpleValue) m = new HashMap!(SimpleKey, SimpleValue)();
 	SimpleKey keyObj2 = new SimpleKey("myKey2"), keyObj1 = new SimpleKey("myKey1");
 	SimpleValue valObj2 = new SimpleValue("myVal2"), valObj1 = new SimpleValue("myVal1");
@@ -29,13 +31,26 @@ unittest{
 	m.put(keyObj2, valObj2);
 	assert(m.get(keyObj1).opEquals(valObj1));
 	assert(m.get(keyObj2).opEquals(valObj2));
-//	assert(m.get(keyObj2)=="myVal2");
+}
+
+unittest{ 
+	
+	//Testing remove and containsKey
+	HashMap!(SimpleKey, SimpleValue) m = new HashMap!(SimpleKey, SimpleValue)();
+	SimpleKey keyObj2 = new SimpleKey("myKey2"), keyObj1 = new SimpleKey("myKey1");
+	SimpleValue valObj2 = new SimpleValue("myVal2"), valObj1 = new SimpleValue("myVal1");
+	m.put(keyObj1, valObj1);
+	m.put(keyObj2, valObj2);
+	assert(m.getSize() ==2);
+	m.remove(keyObj1);
+	assert(m.containsKey(keyObj1) == false);
+	assert(m.containsKey(keyObj2) == true);
+	assert(m.getSize() ==1);
 }
 
 void main() {
 	
 	writeln("testing");
-	
 	/*int d;
 	readf("Enter number : %d", &d);*/
 }

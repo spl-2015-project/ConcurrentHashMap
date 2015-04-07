@@ -137,6 +137,11 @@ public class HashMap(K, V) : IMap!(K, V){
 	* Wipe contents of map
 	*/
 	override public void clear(){
-		
+		backingArr = new Node[capacity];
+		//TODO need to check on how gc works in this case
+	}
+	
+	override public int getSize(){
+		return this.size;
 	}
 }

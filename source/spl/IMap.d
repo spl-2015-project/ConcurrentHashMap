@@ -27,5 +27,9 @@ public interface IMap(K:Object, V:Object ){
 		Clear the contents of the map
 	*/
 	public void clear();
+	/**
+	* Return number of elements in the map
+	*/
+	public int getSize();
 }
 
