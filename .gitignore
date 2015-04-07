@@ -3,3 +3,5 @@
 /concurrenthashmap.exe
 
 /concurrenthashmap.lib
+/.externalToolBuilders/
+/.settings/
