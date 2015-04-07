@@ -48,7 +48,9 @@ public class HashMap(K, V) : IMap!(K, V){
 	private int getBucket(K key){
 		return key.toHash() % capacity;
 	}
-	
+	/**
+	* Put a value in the Hash Map based on its key
+	*/
 	override public void put(K key, V value){
 		if(containsKey(key)){
 			//TODO : need to add exception handling for this case
@@ -64,7 +66,9 @@ public class HashMap(K, V) : IMap!(K, V){
 		}
 		this.size++;
 	}
-	
+	/**
+	*Find a value based on a given key
+	*/
 	override public V get(K key){
 		int bucket = getBucket(key);
 		Node t, first;
@@ -101,29 +105,28 @@ public class HashMap(K, V) : IMap!(K, V){
 	*/
 	override public bool isEmpty(){
 		if(this.size == 0)
-			return false;
+			return true;
 		else
-			return true;	
+			return false;	
 	}
 	/**
 	* Remove value of given key. 
-	* returns the value that was returned, null if ke not found
+	* returns the value that was returned, null if key not found
 	*/
 	override public V remove(K key){
 		int bucket = getBucket(key);
-		//From the bucket, traverse the list for appropriate key
 		Node prev, curr;
+		//From the bucket, traverse the list for appropriate key
 		prev = curr = backingArr[bucket];
 		while(curr !is null){
 			if(curr.key.opEquals(key)){
 				// first node match; handle separately
 				if(backingArr[bucket] == curr){
-					backingArr[bucket] = curr.next;
-					this.size--;		
+					backingArr[bucket] = curr.next;						
 				}else{
 					prev.next = curr.next;
+				}	
 					this.size--;
-				}					
 					return curr.value;
 			}
 			prev = curr;
@@ -141,6 +144,9 @@ public class HashMap(K, V) : IMap!(K, V){
 		//TODO need to check on how gc works in this case
 	}
 	
+	/**
+	*	Get size of Hash Map
+	*/
 	override public int getSize(){
 		return this.size;
 	}
