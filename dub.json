@@ -1,0 +1,7 @@
+{
+	"name" : "ConcurrentHashMap",
+	"description" : "An implementation of a concurrenthashmap in D",
+	 "dependencies" : {
+		"dunit": "~>1.0.10"
+ 	}
+}

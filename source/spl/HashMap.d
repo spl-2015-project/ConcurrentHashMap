@@ -105,17 +105,32 @@ public class HashMap(K, V) : IMap!(K, V){
 		else
 			return true;	
 	}
-	override public V remove(K){
-		if(containsKey(K)){
-			int bucket = getBucket(K);
-			int value = backingArr[bucket].value;
-			//I think some of the logic for our map is broken (left off here)
-			backingArr[bucket] = null;
-			this.size--;
-			return value;
-		}else{
-			//TODO : Excepction if key is not found
-		}		
+	/**
+	* Remove value of given key. 
+	* returns the value that was returned, null if ke not found
+	*/
+	override public V remove(K key){
+		int bucket = getBucket(key);
+		//From the bucket, traverse the list for appropriate key
+		Node prev, curr;
+		prev = curr = backingArr[bucket];
+		while(curr !is null){
+			if(curr.key.opEquals(key)){
+				// first node match; handle separately
+				if(backingArr[bucket] == curr){
+					backingArr[bucket] = curr.next;
+					this.size--;
+					return curr.value;
+				}
+					prev.next = curr.next;
+					this.size--;
+					return curr.value;
+			}
+			prev = curr;
+			curr = curr.next;
+		}
+		//no key found
+		return null;
 	}
 	
 	/**

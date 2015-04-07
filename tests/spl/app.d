@@ -1,4 +1,4 @@
-module main;
+module spl.main;
 import std.stdio;
 import spl.impl;
 import spl.interfaces;
@@ -29,12 +29,12 @@ unittest{
 	m.put(keyObj2, valObj2);
 	assert(m.get(keyObj1).opEquals(valObj1));
 	assert(m.get(keyObj2).opEquals(valObj2));
-//	assert(m.get(keyObj2)=="myVal2");
 }
 
 void main() {
 	
-	writeln("testing");
+	
+	writeln("tests");
 	
 	/*int d;
 	readf("Enter number : %d", &d);*/

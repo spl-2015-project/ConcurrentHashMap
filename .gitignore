@@ -2,3 +2,4 @@
 /.dub/
 /concurrenthashmap.exe
 
+/concurrenthashmap.lib
