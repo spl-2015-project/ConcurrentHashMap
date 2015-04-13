@@ -1,11 +1,12 @@
-module spl.impl;
+module spl.impl2;
 
 import std.stdio;
 import spl.interfaces;
 
-public class HashMap(K, V) : IMap!(K, V){
+public class ConcurrentHashMap(K, V) : IMap!(K, V){
 	
 	private static final int INITIAL_CAPACITY = 32;
+	private static final int LOCKS = 32;
 	
 	/**
 	* Hold the current size, which is equal to number of elements in the map
@@ -18,6 +19,7 @@ public class HashMap(K, V) : IMap!(K, V){
 	
 	private int capacity;
 	
+	private Object locks[];
 	/**
 	* This class will encapsulate a key value pair
 	*/
@@ -37,16 +39,32 @@ public class HashMap(K, V) : IMap!(K, V){
 	this(){
 		this.capacity = INITIAL_CAPACITY;
 		backingArr = new Node[INITIAL_CAPACITY];
+		locks =  new Object[LOCKS];
+		initializeLocks();
 	}
 	this(int capacity){
+		if(capacity < 32){
+			capacity = 32;
+		}
 		this.capacity = capacity;
 		backingArr = new Node[capacity];
+		locks = new Object[LOCKS];
+		initializeLocks();
+	}
+	private void initializeLocks(){
+		for(int i=0; i<LOCKS; i++){
+			locks[i] = new Object();
+		}
 	}
 	/** 
 	* Given a key, this function returns the appropriate bucket
 	*/
 	private int getBucket(K key){
 		return key.toHash() % capacity;
+	}
+	
+	private Object getLock(int bucket){
+		return locks[bucket/capacity];
 	}
 	/**
 	* Put a value in the Hash Map based on its key
@@ -60,17 +78,20 @@ public class HashMap(K, V) : IMap!(K, V){
 			rehash();
 		}
 		int bucket = getBucket(key);
-		Node newNode = new Node(key, value);
-		if(backingArr[bucket] is null){
-			backingArr[bucket] = newNode;
-		} else {
-			newNode.next = backingArr[bucket];
-			backingArr[bucket] = newNode;
+		Object lock = getLock(bucket);
+		synchronized (lock) {
+			Node newNode = new Node(key, value);
+			if(backingArr[bucket] is null){
+				backingArr[bucket] = newNode;
+			} else {
+				newNode.next = backingArr[bucket];
+				backingArr[bucket] = newNode;
+			}
+			this.size++;
 		}
-		this.size++;
+		
 	}
 	private void rehash(){
-		
 	}
 	/**
 	*Find a value based on a given key
@@ -81,9 +102,31 @@ public class HashMap(K, V) : IMap!(K, V){
 		t = first = backingArr[bucket];
 		while(t !is null){
 			if(t.key.opEquals(key)){
-				return t.value;
+				// null implies element has been removed
+				if(t.value is null){
+				 	break;
+			 	}
+				else{
+					return t.value;
+				}
 			}
 			t = t.next;
+		}
+		// obtain corresponding lock and re check
+		Object lock = getLock(bucket);
+		synchronized (lock) {
+			while(t !is null){
+				if(t.key.opEquals(key)){
+					// null implies element has been removed
+					if(t.value is null){
+					 	break;
+				 	}
+					else{
+						return t.value;
+					}
+				}
+				t = t.next;
+			}
 		}
 		return null;
 	}
@@ -122,21 +165,24 @@ public class HashMap(K, V) : IMap!(K, V){
 	override public V remove(K key){
 		int bucket = getBucket(key);
 		Node prev, curr;
-		//From the bucket, traverse the list for appropriate key
-		prev = curr = backingArr[bucket];
-		while(curr !is null){
-			if(curr.key.opEquals(key)){
-				// first node match; handle separately
-				if(backingArr[bucket] == curr){
-					backingArr[bucket] = curr.next;						
-				}else{
-					prev.next = curr.next;
-				}	
-					this.size--;
-					return curr.value;
+		Object lock = getLock(bucket);
+		synchronized (lock) {
+			//From the bucket, traverse the list for appropriate key
+			prev = curr = backingArr[bucket];
+			while(curr !is null){
+				if(curr.key.opEquals(key)){
+					// first node match; handle separately
+					if(backingArr[bucket] == curr){
+						backingArr[bucket] = curr.next;						
+					}else{
+						prev.next = curr.next;
+					}	
+						this.size--;
+						return curr.value;
+				}
+				prev = curr;
+				curr = curr.next;
 			}
-			prev = curr;
-			curr = curr.next;
 		}
 		//no key found
 		return null;

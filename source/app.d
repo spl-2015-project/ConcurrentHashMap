@@ -1,6 +1,7 @@
 module main;
 import std.stdio;
-import spl.impl;
+import spl.impl; 
+import spl.impl2; 
 import spl.interfaces;
 
 class SimpleValue{
@@ -24,7 +25,7 @@ class SimpleKey{
 unittest{ 
 	
 	//Testing simple put
-	HashMap!(SimpleKey, SimpleValue) m = new HashMap!(SimpleKey, SimpleValue)();
+	ConcurrentHashMap!(SimpleKey, SimpleValue) m = new ConcurrentHashMap!(SimpleKey, SimpleValue)();
 	SimpleKey keyObj2 = new SimpleKey("myKey2"), keyObj1 = new SimpleKey("myKey1");
 	SimpleValue valObj2 = new SimpleValue("myVal2"), valObj1 = new SimpleValue("myVal1");
 	m.put(keyObj1, valObj1);
@@ -36,7 +37,7 @@ unittest{
 unittest{ 
 	
 	//Testing remove and containsKey
-	HashMap!(SimpleKey, SimpleValue) m = new HashMap!(SimpleKey, SimpleValue)();
+	ConcurrentHashMap!(SimpleKey, SimpleValue) m = new ConcurrentHashMap!(SimpleKey, SimpleValue)();
 	SimpleKey keyObj2 = new SimpleKey("myKey2"), keyObj1 = new SimpleKey("myKey1");
 	SimpleValue valObj2 = new SimpleValue("myVal2"), valObj1 = new SimpleValue("myVal1");
 	m.put(keyObj1, valObj1);
