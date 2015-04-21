@@ -52,22 +52,24 @@ public class HashMap(K, V) : IMap!(K, V){
 	* Put a value in the Hash Map based on its key
 	*/
 	override public void put(K key, V value){
-		if(containsKey(key)){
-			//TODO : need to add exception handling for this case
-			return;
+		synchronized (this) {
+			if(containsKey(key)){
+				//TODO : need to add exception handling for this case
+				return;
+			}
+			if(this.size == this.capacity - 1){
+				rehash();
+			}
+			int bucket = getBucket(key);
+			Node newNode = new Node(key, value);
+			if(backingArr[bucket] is null){
+				backingArr[bucket] = newNode;
+			} else {
+				newNode.next = backingArr[bucket];
+				backingArr[bucket] = newNode;
+			}
+			this.size++;
 		}
-		if(this.size == this.capacity - 1){
-			rehash();
-		}
-		int bucket = getBucket(key);
-		Node newNode = new Node(key, value);
-		if(backingArr[bucket] is null){
-			backingArr[bucket] = newNode;
-		} else {
-			newNode.next = backingArr[bucket];
-			backingArr[bucket] = newNode;
-		}
-		this.size++;
 	}
 	private void rehash(){
 		
@@ -76,35 +78,39 @@ public class HashMap(K, V) : IMap!(K, V){
 	*Find a value based on a given key
 	*/
 	override public V get(K key){
-		int bucket = getBucket(key);
-		Node t, first;
-		t = first = backingArr[bucket];
-		while(t !is null){
-			if(t.key.opEquals(key)){
-				return t.value;
+		synchronized (this) {
+			int bucket = getBucket(key);
+			Node t, first;
+			t = first = backingArr[bucket];
+			while(t !is null){
+				if(t.key.opEquals(key)){
+					return t.value;
+				}
+				t = t.next;
 			}
-			t = t.next;
+			return null;
 		}
-		return null;
 	}
 	
 	/**
 	* Check if the given key is present in the map
 	*/
 	override public bool containsKey(K key){
-		int bucket = getBucket(key);
-		Node t, first;
-		t = first = backingArr[bucket];
-		if(first is null){
+		synchronized (this) {
+			int bucket = getBucket(key);
+			Node t, first;
+			t = first = backingArr[bucket];
+			if(first is null){
+				return false;
+			}
+			while(t !is null){
+				if(t.key.opEquals(key)){
+					return true;
+				}
+				t = t.next;
+			}
 			return false;
 		}
-		while(t !is null){
-			if(t.key.opEquals(key)){
-				return true;
-			}
-			t = t.next;
-		}
-		return false;
 	}
 	/**
 	* Check if map is empty
@@ -120,26 +126,28 @@ public class HashMap(K, V) : IMap!(K, V){
 	* returns the value that was returned, null if key not found
 	*/
 	override public V remove(K key){
-		int bucket = getBucket(key);
-		Node prev, curr;
-		//From the bucket, traverse the list for appropriate key
-		prev = curr = backingArr[bucket];
-		while(curr !is null){
-			if(curr.key.opEquals(key)){
-				// first node match; handle separately
-				if(backingArr[bucket] == curr){
-					backingArr[bucket] = curr.next;						
-				}else{
-					prev.next = curr.next;
-				}	
-					this.size--;
-					return curr.value;
+		synchronized (this) {
+			int bucket = getBucket(key);
+			Node prev, curr;
+			//From the bucket, traverse the list for appropriate key
+			prev = curr = backingArr[bucket];
+			while(curr !is null){
+				if(curr.key.opEquals(key)){
+					// first node match; handle separately
+					if(backingArr[bucket] == curr){
+						backingArr[bucket] = curr.next;						
+					}else{
+						prev.next = curr.next;
+					}	
+						this.size--;
+						return curr.value;
+				}
+				prev = curr;
+				curr = curr.next;
 			}
-			prev = curr;
-			curr = curr.next;
+			//no key found
+			return null;
 		}
-		//no key found
-		return null;
 	}
 	
 	/**
